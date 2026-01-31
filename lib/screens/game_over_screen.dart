@@ -104,178 +104,189 @@ class _GameOverScreenState extends State<GameOverScreen> {
           ),
         ),
         child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'GAME OVER',
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 8,
-                      shadows: [
-                        Shadow(
-                          color: Colors.red,
-                          blurRadius: 20,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final isMobile = screenWidth < 400;
+              final titleSize = isMobile ? 36.0 : 48.0;
+              final scoreSize = isMobile ? 40.0 : 56.0;
+              final inputWidth = (screenWidth * 0.8).clamp(200.0, 280.0);
+
+              return Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(isMobile ? 16 : 32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'GAME OVER',
+                        style: TextStyle(
+                          fontSize: titleSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: isMobile ? 4 : 8,
+                          shadows: const [
+                            Shadow(
+                              color: Colors.red,
+                              blurRadius: 20,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white24),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'SCORE',
-                          style: TextStyle(
-                            color: Colors.white54,
-                            fontSize: 14,
-                            letterSpacing: 4,
-                          ),
+                      ),
+                      SizedBox(height: isMobile ? 24 : 40),
+                      Container(
+                        padding: EdgeInsets.all(isMobile ? 16 : 24),
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.white24),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          widget.score.toString(),
-                          style: const TextStyle(
-                            fontSize: 56,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        child: Column(
+                          children: [
+                            const Text(
+                              'SCORE',
+                              style: TextStyle(
+                                color: Colors.white54,
+                                fontSize: 14,
+                                letterSpacing: 4,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              widget.score.toString(),
+                              style: TextStyle(
+                                fontSize: scoreSize,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Time: ${_formatTime(widget.playTimeSeconds)}',
+                              style: TextStyle(
+                                fontSize: isMobile ? 16 : 20,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: isMobile ? 24 : 40),
+                      if (!_hasSubmitted) ...[
+                        SizedBox(
+                          width: inputWidth,
+                          child: TextField(
+                            controller: _nameController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              hintText: 'Enter your name',
+                              hintStyle: const TextStyle(color: Colors.white38),
+                              filled: true,
+                              fillColor: Colors.white10,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Colors.cyan),
+                              ),
+                            ),
+                            maxLength: 20,
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          'Time: ${_formatTime(widget.playTimeSeconds)}',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.white70,
+                        SizedBox(
+                          width: inputWidth,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: _isSubmitting ? null : _submitScore,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.cyan,
+                              disabledBackgroundColor: Colors.grey,
+                            ),
+                            child: _isSubmitting
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    'SUBMIT SCORE',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ] else ...[
+                        const Icon(
+                          Icons.check_circle,
+                          color: Colors.green,
+                          size: 64,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Score submitted!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  if (!_hasSubmitted) ...[
-                    SizedBox(
-                      width: 280,
-                      child: TextField(
-                        controller: _nameController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'Enter your name',
-                          hintStyle: const TextStyle(color: Colors.white38),
-                          filled: true,
-                          fillColor: Colors.white10,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Colors.cyan),
-                          ),
-                        ),
-                        maxLength: 20,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: 280,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: _isSubmitting ? null : _submitScore,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.cyan,
-                          disabledBackgroundColor: Colors.grey,
-                        ),
-                        child: _isSubmitting
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text(
-                                'SUBMIT SCORE',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                      SizedBox(height: isMobile ? 24 : 40),
+                      Wrap(
+                        spacing: 16,
+                        runSpacing: 12,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const MainMenuScreen()),
+                            ),
+                            icon: const Icon(Icons.home),
+                            label: const Text('MENU'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white24,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isMobile ? 16 : 24,
+                                vertical: 12,
                               ),
-                      ),
-                    ),
-                  ] else ...[
-                    const Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                      size: 64,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Score submitted!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 40),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () => Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const MainMenuScreen()),
-                        ),
-                        icon: const Icon(Icons.home),
-                        label: const Text('MENU'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white24,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton.icon(
-                        onPressed: () => Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const RankingScreen()),
-                        ),
-                        icon: const Icon(Icons.leaderboard),
-                        label: const Text('RANKINGS'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber.withValues(alpha: 0.3),
-                          foregroundColor: Colors.amber,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                          ElevatedButton.icon(
+                            onPressed: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const RankingScreen()),
+                            ),
+                            icon: const Icon(Icons.leaderboard),
+                            label: const Text('RANKINGS'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amber.withValues(alpha: 0.3),
+                              foregroundColor: Colors.amber,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isMobile ? 16 : 24,
+                                vertical: 12,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),

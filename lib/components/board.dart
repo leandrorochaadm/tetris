@@ -5,6 +5,10 @@ import '../models/position.dart';
 import 'block.dart';
 
 class Board extends PositionComponent {
+  final double blockSize;
+
+  Board({this.blockSize = GameConstants.defaultBlockSize});
+
   final List<List<Color?>> _grid = List.generate(
     GameConstants.boardHeight,
     (_) => List.filled(GameConstants.boardWidth, null),
@@ -15,8 +19,8 @@ class Board extends PositionComponent {
   @override
   Future<void> onLoad() async {
     size = Vector2(
-      GameConstants.boardWidth * GameConstants.blockSize,
-      GameConstants.boardHeight * GameConstants.blockSize,
+      GameConstants.boardWidth * blockSize,
+      GameConstants.boardHeight * blockSize,
     );
   }
 
@@ -31,15 +35,15 @@ class Board extends PositionComponent {
 
     for (int x = 0; x <= GameConstants.boardWidth; x++) {
       canvas.drawLine(
-        Offset(x * GameConstants.blockSize, 0),
-        Offset(x * GameConstants.blockSize, size.y),
+        Offset(x * blockSize, 0),
+        Offset(x * blockSize, size.y),
         gridPaint,
       );
     }
     for (int y = 0; y <= GameConstants.boardHeight; y++) {
       canvas.drawLine(
-        Offset(0, y * GameConstants.blockSize),
-        Offset(size.x, y * GameConstants.blockSize),
+        Offset(0, y * blockSize),
+        Offset(size.x, y * blockSize),
         gridPaint,
       );
     }
@@ -107,9 +111,10 @@ class Board extends PositionComponent {
         if (_grid[y][x] != null) {
           final block = TetrisBlock(
             color: _grid[y][x]!,
+            blockSize: blockSize,
             position: Vector2(
-              x * GameConstants.blockSize,
-              y * GameConstants.blockSize,
+              x * blockSize,
+              y * blockSize,
             ),
           );
           _lockedBlocks.add(block);

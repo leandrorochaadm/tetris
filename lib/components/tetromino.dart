@@ -8,6 +8,7 @@ import 'block.dart';
 
 class Tetromino extends PositionComponent {
   final PieceType type;
+  final double blockSize;
   int _rotationState = 0;
   Position _boardPosition;
   final List<TetrisBlock> _blocks = [];
@@ -15,6 +16,7 @@ class Tetromino extends PositionComponent {
   Tetromino({
     required this.type,
     required Position startPosition,
+    this.blockSize = GameConstants.defaultBlockSize,
   }) : _boardPosition = startPosition;
 
   @override
@@ -74,9 +76,10 @@ class Tetromino extends PositionComponent {
     for (final pos in getBlockPositions()) {
       final block = TetrisBlock(
         color: color,
+        blockSize: blockSize,
         position: Vector2(
-          pos.x * GameConstants.blockSize,
-          pos.y * GameConstants.blockSize,
+          pos.x * blockSize,
+          pos.y * blockSize,
         ),
       );
       _blocks.add(block);

@@ -10,9 +10,10 @@ class TetrisBlock extends PositionComponent {
     required this.color,
     this.isGhost = false,
     required Vector2 position,
+    double blockSize = GameConstants.defaultBlockSize,
   }) : super(
           position: position,
-          size: Vector2.all(GameConstants.blockSize),
+          size: Vector2.all(blockSize),
         );
 
   @override

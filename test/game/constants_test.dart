@@ -9,7 +9,21 @@ void main() {
     });
 
     test('block size is positive', () {
-      expect(GameConstants.blockSize > 0, true);
+      expect(GameConstants.defaultBlockSize > 0, true);
+    });
+
+    test('calculateBlockSize returns appropriate size', () {
+      final size = GameConstants.calculateBlockSize(300, 600);
+      expect(size, 30.0);
+
+      final widerSize = GameConstants.calculateBlockSize(400, 600);
+      expect(widerSize, 30.0);
+
+      final tallerSize = GameConstants.calculateBlockSize(300, 800);
+      expect(tallerSize, 30.0);
+
+      final smallerSize = GameConstants.calculateBlockSize(200, 400);
+      expect(smallerSize, 20.0);
     });
 
     test('drop intervals are valid', () {

@@ -6,7 +6,10 @@ import '../game/constants.dart';
 import 'block.dart';
 
 class GhostPiece extends PositionComponent {
+  final double blockSize;
   final List<TetrisBlock> _blocks = [];
+
+  GhostPiece({this.blockSize = GameConstants.defaultBlockSize});
 
   void updateGhost({
     required PieceType type,
@@ -22,9 +25,10 @@ class GhostPiece extends PositionComponent {
       final block = TetrisBlock(
         color: color,
         isGhost: true,
+        blockSize: blockSize,
         position: Vector2(
-          pos.x * GameConstants.blockSize,
-          pos.y * GameConstants.blockSize,
+          pos.x * blockSize,
+          pos.y * blockSize,
         ),
       );
       _blocks.add(block);

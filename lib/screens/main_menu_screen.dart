@@ -16,48 +16,64 @@ class MainMenuScreen extends StatelessWidget {
             colors: [Color(0xFF1A1A2E), Color(0xFF0F0F1A)],
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'TETRIS',
-                style: TextStyle(
-                  fontSize: 72,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 16,
-                  shadows: [
-                    Shadow(
-                      color: Colors.cyan,
-                      blurRadius: 20,
-                    ),
-                  ],
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final isMobile = screenWidth < 400;
+              final titleSize = isMobile ? 48.0 : 72.0;
+              final buttonWidth = (screenWidth * 0.7).clamp(200.0, 280.0);
+
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'TETRIS',
+                        style: TextStyle(
+                          fontSize: titleSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: isMobile ? 8 : 16,
+                          shadows: const [
+                            Shadow(
+                              color: Colors.cyan,
+                              blurRadius: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: isMobile ? 48 : 80),
+                      _buildMenuButton(
+                        context,
+                        'START GAME',
+                        Icons.play_arrow,
+                        Colors.cyan,
+                        buttonWidth,
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const GameScreen()),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildMenuButton(
+                        context,
+                        'RANKINGS',
+                        Icons.leaderboard,
+                        Colors.amber,
+                        buttonWidth,
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const RankingScreen()),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 80),
-              _buildMenuButton(
-                context,
-                'START GAME',
-                Icons.play_arrow,
-                Colors.cyan,
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const GameScreen()),
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildMenuButton(
-                context,
-                'RANKINGS',
-                Icons.leaderboard,
-                Colors.amber,
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RankingScreen()),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -69,10 +85,11 @@ class MainMenuScreen extends StatelessWidget {
     String text,
     IconData icon,
     Color color,
+    double width,
     VoidCallback onPressed,
   ) {
     return SizedBox(
-      width: 280,
+      width: width,
       height: 56,
       child: ElevatedButton(
         onPressed: onPressed,

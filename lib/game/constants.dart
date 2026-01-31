@@ -6,7 +6,16 @@ class GameConstants {
   // Board dimensions
   static const int boardWidth = 10;
   static const int boardHeight = 20;
-  static const double blockSize = 30.0;
+  static const double defaultBlockSize = 30.0;
+
+  // Calculate responsive block size based on available space
+  static double calculateBlockSize(double availableWidth, double availableHeight) {
+    final blockSizeFromWidth = availableWidth / boardWidth;
+    final blockSizeFromHeight = availableHeight / boardHeight;
+    return blockSizeFromWidth < blockSizeFromHeight
+        ? blockSizeFromWidth
+        : blockSizeFromHeight;
+  }
 
   // Timing (milliseconds between drops)
   static const int initialDropInterval = 1000;

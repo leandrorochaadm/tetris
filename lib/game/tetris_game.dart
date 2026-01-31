@@ -22,6 +22,7 @@ class TetrisGame extends FlameGame with KeyboardEvents {
   PieceType? nextPieceType;
 
   GameState gameState = GameState.ready;
+  double blockSize = GameConstants.defaultBlockSize;
 
   int score = 0;
   int level = 1;
@@ -36,12 +37,24 @@ class TetrisGame extends FlameGame with KeyboardEvents {
 
   @override
   Future<void> onLoad() async {
-    board = Board()..position = Vector2(20, 20);
-    ghostPiece = GhostPiece()..position = Vector2(20, 20);
+    final boardWidth = GameConstants.boardWidth * blockSize;
+    final boardHeight = GameConstants.boardHeight * blockSize;
+
+    // Center the board in the available space
+    final boardX = (size.x - boardWidth) / 2;
+    final boardY = (size.y - boardHeight) / 2;
+
+    board = Board(blockSize: blockSize)..position = Vector2(boardX, boardY);
+    ghostPiece = GhostPiece(blockSize: blockSize)..position = Vector2(boardX, boardY);
+
+    // Next piece display to the right of the board (if space) or hidden
+    final nextDisplayX = boardX + boardWidth + 10;
+    final showNextPiece = nextDisplayX + 80 < size.x;
+
     nextPieceDisplay = NextPieceDisplay(
       position: Vector2(
-        20 + GameConstants.boardWidth * GameConstants.blockSize + 20,
-        20,
+        showNextPiece ? nextDisplayX : -200,
+        boardY,
       ),
     );
 
@@ -96,7 +109,7 @@ class TetrisGame extends FlameGame with KeyboardEvents {
         nextPieceType ?? PieceType.values[_random.nextInt(PieceType.values.length)];
     final spawnPos = PieceData.getSpawnPosition(type);
 
-    currentPiece = Tetromino(type: type, startPosition: spawnPos)
+    currentPiece = Tetromino(type: type, startPosition: spawnPos, blockSize: blockSize)
       ..position = board.position;
 
     if (!board.isValidPosition(currentPiece!.getBlockPositions())) {
